@@ -29,7 +29,7 @@ public class LeetCodeController {
 
         leetCodeService.addDailyProblem();
 
-        return new ResponseEntity<>("Problem added successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Problem added successfully check 1", HttpStatus.OK);
     }
 
 }
