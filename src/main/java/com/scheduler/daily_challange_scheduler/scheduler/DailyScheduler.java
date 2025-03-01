@@ -1,6 +1,7 @@
 package com.scheduler.daily_challange_scheduler.scheduler;
 
 import com.scheduler.daily_challange_scheduler.LeetCodeDailyProblem;
+import com.scheduler.daily_challange_scheduler.service.EmailService;
 import com.scheduler.daily_challange_scheduler.service.LeetCodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import java.time.LocalDateTime;
+
 @Component
 @Slf4j
 public class DailyScheduler {
@@ -23,6 +26,9 @@ public class DailyScheduler {
     @Lazy
     @Autowired
     LeetCodeService leetCodeService;
+
+    @Autowired
+    EmailService emailService;
 
     @Value("${leetcode.session.token}")
     private String sessionToken;
@@ -65,6 +71,13 @@ public class DailyScheduler {
 
                 log.info("Daily Problem added successfully");
             }
+
+            String emailBody = dailyProblemResponse.getData().getActiveDailyCodingChallengeQuestion().getDate() + " Leetcode question is "
+                                + dailyProblemResponse.getData().getActiveDailyCodingChallengeQuestion().getQuestion().getTitle() + "\n Difficulty " +
+                                dailyProblemResponse.getData().getActiveDailyCodingChallengeQuestion().getQuestion().getDifficulty() + "\n question link : https://leetcode.com" +
+                                dailyProblemResponse.getData().getActiveDailyCodingChallengeQuestion().getLink();
+            emailService.sendEmail("example@ok.com", "Leetcode Daily Question Dated : " + LocalDateTime.now(), emailBody);
+
         } else {
             log.error("No data found for today's problem.");
         }
